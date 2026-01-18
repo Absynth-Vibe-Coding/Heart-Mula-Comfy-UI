@@ -1,0 +1,316 @@
+{
+  "id": "07da0e0d-8e34-4762-8dcf-981e53a275bd",
+  "revision": 0,
+  "last_node_id": 28,
+  "last_link_id": 22,
+  "nodes": [
+    {
+      "id": 11,
+      "type": "PathchSageAttentionKJ",
+      "pos": [
+        1703.571185869485,
+        3337.065316350978
+      ],
+      "size": [
+        270,
+        82
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "model",
+          "name": "model",
+          "type": "MODEL",
+          "link": null
+        },
+        {
+          "label": "sage_attention",
+          "name": "sage_attention",
+          "type": "COMBO",
+          "widget": {
+            "name": "sage_attention"
+          },
+          "link": null
+        },
+        {
+          "label": "allow_compile",
+          "name": "allow_compile",
+          "shape": 7,
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "allow_compile"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "label": "MODEL",
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            6
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-kjnodes",
+        "ver": "1.2.1",
+        "Node name for S&R": "PathchSageAttentionKJ",
+        "ue_properties": {
+          "widget_ue_connectable": {
+            "sage_attention": true,
+            "allow_compile": true
+          },
+          "version": "7.0.1"
+        },
+        "widget_ue_connectable": {}
+      },
+      "widgets_values": [
+        "auto",
+        false
+      ],
+      "color": "#233",
+      "bgcolor": "#355"
+    },
+    {
+      "id": 12,
+      "type": "ModelPatchTorchSettings",
+      "pos": [
+        2025.9616627392343,
+        3342.912053091212
+      ],
+      "size": [
+        257.38641357421875,
+        58
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "model",
+          "name": "model",
+          "type": "MODEL",
+          "link": 6
+        },
+        {
+          "label": "enable_fp16_accumulation",
+          "name": "enable_fp16_accumulation",
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "enable_fp16_accumulation"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "label": "MODEL",
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": []
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-kjnodes",
+        "ver": "1.2.1",
+        "Node name for S&R": "ModelPatchTorchSettings",
+        "ue_properties": {
+          "widget_ue_connectable": {
+            "enable_fp16_accumulation": true
+          },
+          "version": "7.0.1"
+        },
+        "widget_ue_connectable": {}
+      },
+      "widgets_values": [
+        true
+      ],
+      "color": "#233",
+      "bgcolor": "#355"
+    },
+    {
+      "id": 19,
+      "type": "HeartMuLaLoader",
+      "pos": [
+        -397.14776919123375,
+        3100.5986727142686
+      ],
+      "size": [
+        398.1984531576809,
+        82
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "model",
+          "type": "HEARTMULA_MODEL",
+          "links": [
+            21
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "HeartMuLaLoader"
+      },
+      "widgets_values": [
+        "HeartMuLa-3B",
+        "3B"
+      ],
+      "color": "#233",
+      "bgcolor": "#355"
+    },
+    {
+      "id": 7,
+      "type": "PreviewAudio",
+      "pos": [
+        607.9077238518621,
+        3102.5887193339104
+      ],
+      "size": [
+        270,
+        88
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "audio",
+          "type": "AUDIO",
+          "link": 22
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.9.2",
+        "Node name for S&R": "PreviewAudio"
+      },
+      "widgets_values": [],
+      "color": "#233",
+      "bgcolor": "#355"
+    },
+    {
+      "id": 26,
+      "type": "HeartMuLaGenerate",
+      "pos": [
+        54.25187005077407,
+        3101.294271412688
+      ],
+      "size": [
+        514.5816525678977,
+        583.6902771086216
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "HEARTMULA_MODEL",
+          "link": 21
+        }
+      ],
+      "outputs": [
+        {
+          "name": "audio",
+          "type": "AUDIO",
+          "links": [
+            22
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "HeartMuLaGenerate"
+      },
+      "widgets_values": [
+        "[Verse]\nWired to the grid,I was playing a part\nJust a steady signal with a hollow heart\nBut the neon lights are flashing in my eyes\nCutting through the static and the old disguise\n\n[Prechorus]\nTurn the voltage up,watch the meters redline\nI am stepping out of the rigid design\nThe bass is kicking in,shaking off the rust\nTurning all the shadows into diamond dust\n\n[Chorus]\nI’m finding my frequency,loud and clear\nNothing left to hide,nothing left to fear\nThe rhythm is a mirror showing who I am\nBreaking through the walls of the hologram\nYeah,I’m electric,I’m finally me\nDancing on the edge of reality\n\n[Verse]\nSynthesized horizons glowing in the dark\nEvery single beat is a brand new spark\nI don’t need a map for the road ahead\nI’ll follow where the pulse of the night is led\n\n[Bridge]\nNo more glitches,no more doubt\nLet the energy scream out\nThis is what it’s all about\n\n[Chorus]\nI’m finding my frequency,loud and clear\nNothing left to hide,nothing left to fear\nThe rhythm is a mirror showing who I am\nBreaking through the walls of the hologram\nYeah,I’m electric,I’m finally me\nDancing on the edge of reality\n\n[Outro]\nI am the sound\nI am the light\nBurning bright",
+        "EDM - Trance",
+        "",
+        40,
+        1,
+        50,
+        1,
+        1,
+        2266829389,
+        "randomize"
+      ],
+      "color": "#233",
+      "bgcolor": "#355"
+    },
+    {
+      "id": 9,
+      "type": "Note",
+      "pos": [
+        -416.6045667632054,
+        3252.248852121168
+      ],
+      "size": [
+        430.614554861336,
+        435.1821122859151
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {},
+      "widgets_values": [
+        "\n   █████╗ ██████╗ ███████╗██╗   ██╗███╗   ██╗████████╗██╗  ██╗\n  ██╔══██╗██╔══██╗██╔════╝╚██╗ ██╔╝████╗  ██║╚══██╔══╝██║  ██║\n  ███████║██████╔╝███████╗ ╚████╔╝ ██╔██╗ ██║   ██║   ███████║\n  ██╔══██║██╔══██╗╚════██║  ╚██╔╝  ██║╚██╗██║   ██║   ██╔══██║\n  ██║  ██║██████╔╝███████║   ██║   ██║ ╚████║   ██║   ██║  ██║\n  ╚═╝  ╚═╝╚═════╝ ╚══════╝   ╚═╝   ╚═╝  ╚═══╝   ╚═╝   ╚═╝  ╚═╝ \n\n            https://absynth-vibe-coding.github.io/\n\n             If you like this follow me on my \n           YouTube channel Electric Dreams, thx! \n                 \n                 HeartMula for ComfyUI v1.0\n\n                    Better speed: cfg 1\n      codec_steps 1-5: 1 \"fast\" and still really good quality\n          2: better quality and still ok speed\n   \n Speed is like generating a video, but the quality is a lot better\n               than the previous music generators! \n\n            Minimum 16gb VRAM, it uses all of it, \n       so dont watch videos while  you use this node ;-)\n                \n                    20 sec= 250 steps                  \n                    40 sec= 500 steps\n                    60 sec= 750 steps\n\n                 Custom Tags try for example: \n energetic, electronic, synthesizer, drum machine, self- discovery\n          \n           more tags on https://heartmula.github.io/\n"
+      ],
+      "color": "#233",
+      "bgcolor": "#355"
+    }
+  ],
+  "links": [
+    [
+      6,
+      11,
+      0,
+      12,
+      0,
+      "MODEL"
+    ],
+    [
+      21,
+      19,
+      0,
+      26,
+      0,
+      "HEARTMULA_MODEL"
+    ],
+    [
+      22,
+      26,
+      0,
+      7,
+      0,
+      "AUDIO"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "workflowRendererVersion": "LG",
+    "ds": {
+      "scale": 1.4026765751590238,
+      "offset": [
+        512.0132522045178,
+        -3090.8539016847726
+      ]
+    },
+    "frontendVersion": "1.36.14",
+    "VHS_latentpreview": false,
+    "VHS_latentpreviewrate": 0,
+    "VHS_MetadataImage": true,
+    "VHS_KeepIntermediate": true
+  },
+  "version": 0.4
+}
