@@ -59,6 +59,9 @@ Download the : [Workflow](https://github.com/Absynth-Vibe-Coding/Heart-Mula-Comf
     <pre>pip install -r requirements.txt</pre>
   </li>
   <li>
+    <pre>pip install --no-deps git+https://github.com/HeartMuLa/heartlib.git</pre></p>
+  </li>
+  <li>
     <p>Download the model from https://huggingface.co/HeartMuLa/HeartMuLa-oss-3B and place in:</p>
     <pre>ComfyUI/models/heartmula/</pre>
   </li>
