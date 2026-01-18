@@ -5,7 +5,7 @@
 
 <img width="1681" height="611" alt="image" src="https://github.com/user-attachments/assets/75293383-c49b-4bc6-9f88-84fd8c8e94ab" />
 
-Download the Model: https://huggingface.co/HeartMuLa/HeartMuLa-oss-3B
+Download the Model: https://huggingface.co/HeartMuLa/HeartMuLa-oss-3B<br>
 Download the Workflow: https://github.com/Absynth-Vibe-Coding/Heart-Mula-Comfy-UI/blob/main/heartmula_nodes.py
 
 <hr>
