@@ -8,7 +8,7 @@
 
 Download the [Model](https://huggingface.co/HeartMuLa/HeartMuLa-oss-3B)  
 Download the : [Workflow](https://github.com/Absynth-Vibe-Coding/Heart-Mula-Comfy-UI/blob/main/HeartMula%20Absynth%20v1.0.json)
-If you like this: Subscribe to my YouTube Channel https://www.youtube.com/@Electric-Dreamz
+<br>If you like this: Subscribe to my YouTube Channel https://www.youtube.com/@Electric-Dreamz
 
 <strong>Important:</strong> dont sell the music 
 🔒 For non-commercial research and educational use only<br>
