@@ -8,6 +8,11 @@
 Download the Model: https://huggingface.co/HeartMuLa/HeartMuLa-oss-3B<br>
 Download the Workflow: https://github.com/Absynth-Vibe-Coding/Heart-Mula-Comfy-UI/blob/main/heartmula_nodes.py
 
+<strong>Important:</strong> dont sell the music 
+🔒 For non-commercial research and educational use only<br>
+🚫 Any commercial use is strictly prohibited
+
+
 <hr>
 
 <h2>About</h2>
