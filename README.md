@@ -1,5 +1,6 @@
 <div align="center">
   <h1>HeartMuLa ComfyUI Nodes</h1>
+<strong>Heart Music Language Model</strong>
   <p><em>Generate music from lyrics using HeartMuLa in ComfyUI</em></p>
 </div>
 
