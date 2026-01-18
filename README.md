@@ -67,11 +67,7 @@ Download the Model: https://huggingface.co/HeartMuLa/HeartMuLa-oss-3B
 
 <h2>Tags Format</h2>
 
-<p><strong>Correct:</strong></p>
 <pre>trance,electronic,synthesizer,energetic,driving</pre>
-
-<p><strong>Incorrect:</strong></p>
-<pre>trance, electronic, synthesizer, energetic, driving</pre>
 
 <h2>Requirements</h2>
 
