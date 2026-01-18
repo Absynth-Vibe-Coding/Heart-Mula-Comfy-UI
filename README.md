@@ -34,6 +34,7 @@ Download the : [Workflow](https://github.com/Absynth-Vibe-Coding/Heart-Mula-Comf
 
 - select genre preset (uses tags)
 - custom tags: seperate with comma
+- adjust codec steps: 1 is already very good, but you can go higher (better quality)
 
 <img width="756" height="823" alt="image" src="https://github.com/user-attachments/assets/bef44d3e-00d4-42f8-a1c8-5237c8dfe712" />
 
