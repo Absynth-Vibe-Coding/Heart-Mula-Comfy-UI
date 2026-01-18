@@ -32,6 +32,9 @@ Download the : [Workflow](https://github.com/Absynth-Vibe-Coding/Heart-Mula-Comf
 
 <h2>Features</h2>
 
+<img width="756" height="823" alt="image" src="https://github.com/user-attachments/assets/bef44d3e-00d4-42f8-a1c8-5237c8dfe712" />
+
+
 <ul>
   <li><strong>Genre Presets</strong> - EDM, Hip Hop, Rock, Jazz, Lo-Fi, and more</li>
   <li><strong>Custom Tags</strong> - Full control over style with comma-separated tags</li>
