@@ -12,7 +12,16 @@ Download the Workflow: https://github.com/Absynth-Vibe-Coding/Heart-Mula-Comfy-U
 🔒 For non-commercial research and educational use only<br>
 🚫 Any commercial use is strictly prohibited
 
-
+ The folder structure should be:
+  models/heartmula/
+    └── [model_name]/
+          ├── HeartMuLa-oss-3B/
+          │     └── config.json (+ other files)
+          ├── HeartMuLa-oss-7B/
+          │     └── config.json (+ other files)
+          ├── HeartCodec-oss/
+          ├── tokenizer.json
+          └── gen_config.json
 <hr>
 
 <h2>About</h2>
