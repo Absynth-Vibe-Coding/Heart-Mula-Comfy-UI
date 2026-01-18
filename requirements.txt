@@ -1,4 +1,3 @@
 git+https://github.com/HeartMuLa/heartlib.git
-torchaudio
 soundfile>=0.12.0
 transformers>=4.40.0
