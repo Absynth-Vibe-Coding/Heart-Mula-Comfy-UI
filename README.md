@@ -70,7 +70,7 @@ Download the : [Workflow](https://github.com/Absynth-Vibe-Coding/Heart-Mula-Comf
 <h3>HeartMuLa Loader</h3>
 <table>
   <tr><th>Parameter</th><th>Description</th></tr>
-  <tr><td><code>model_name</code></td><td>Select downloaded model from models/heartmula</td></tr>
+  <tr><td><code>model_name</code></td><td>Select downloaded model from models/heartmula</td></tr> Yes, you need all the files
   <tr><td><code>version</code></td><td>3B (faster, ~12GB VRAM) or 7B (better quality, more VRAM)</td></tr>
 </table>
 
