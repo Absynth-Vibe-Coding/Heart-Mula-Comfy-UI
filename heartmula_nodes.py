@@ -98,6 +98,10 @@ class HeartMuLaLoader:
                     "default": "3B",
                     "tooltip": "Model version to load"
                 }),
+                "quantization": (["none", "int8", "int4"], {
+                    "default": "none",
+                    "tooltip": "BitsAndBytes quantization: none=full precision, int8=~50% VRAM, int4=~75% VRAM reduction"
+                }),
             }
         }
 
@@ -112,7 +116,7 @@ class HeartMuLaLoader:
         # Force refresh of model list
         return float("nan")
 
-    def load_model(self, model_name: str, version: str):
+    def load_model(self, model_name: str, version: str, quantization: str = "none"):
         if model_name == "no models found":
             raise ValueError(f"No HeartMuLa models found in {HEARTMULA_MODELS_DIR}. Please download a model.")
 
@@ -121,7 +125,7 @@ class HeartMuLaLoader:
         else:
             model_path = os.path.join(HEARTMULA_MODELS_DIR, model_name)
 
-        cache_key = f"{model_path}_{version}"
+        cache_key = f"{model_path}_{version}_{quantization}"
 
         if cache_key in self._model_cache:
             return (self._model_cache[cache_key],)
@@ -134,11 +138,28 @@ class HeartMuLaLoader:
 
         device = comfy.model_management.get_torch_device()
 
+        # Setup BitsAndBytes quantization config
+        bnb_config = None
+        if quantization == "int8":
+            from transformers import BitsAndBytesConfig
+            bnb_config = BitsAndBytesConfig(load_in_8bit=True)
+            print("[HeartMuLa] Loading with int8 quantization")
+        elif quantization == "int4":
+            from transformers import BitsAndBytesConfig
+            bnb_config = BitsAndBytesConfig(
+                load_in_4bit=True,
+                bnb_4bit_use_double_quant=True,
+                bnb_4bit_quant_type="nf4",
+                bnb_4bit_compute_dtype=torch.bfloat16,
+            )
+            print("[HeartMuLa] Loading with int4 quantization")
+
         pipe = HeartMuLaGenPipeline.from_pretrained(
             model_path,
             version=version,
             dtype=torch.bfloat16,
-            device=device
+            device=device,
+            bnb_config=bnb_config,
         )
 
         self._model_cache[cache_key] = pipe
