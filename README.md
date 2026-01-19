@@ -10,7 +10,7 @@
 <h2>NEWS</strong></h2>
 <strong>v1.1: added quantization options for lower vram</strong><br>
 -int8 - ~50% VRAM reduction<br>
--int4 - ~75% VRAM reduction (uses nf4 quantization)<br><br> <-fastest
+-int4 - ~75% VRAM reduction (uses nf4 quantization) <-fastest <br><br> 
 
 Info: you can still get ooms, then just retry but its still going to be faster when it works using the quantization<br><br>
 Try more codec steps now since its faster, depends on how much vram you have. on 16gb vram use codec steps 2 else you probably get ooms
