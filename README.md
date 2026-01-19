@@ -9,8 +9,9 @@
 <h2>NEWS</strong></h2>
 <strong>v1.1: added quantization options for lower vram</strong><br>
 -int8 - ~50% VRAM reduction<br>
--int4 - ~75% VRAM reduction (uses nf4 quantization)<br><br><br>
+-int4 - ~75% VRAM reduction (uses nf4 quantization)<br><br>
 
+Info: you can still get ooms, then just retry but its still going to be faster when it works using the quantization<br><br>
 
 
 Download the [Model](https://huggingface.co/HeartMuLa/HeartMuLa-oss-3B)  
