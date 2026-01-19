@@ -12,7 +12,7 @@
 -int4 - ~75% VRAM reduction (uses nf4 quantization)<br><br>
 
 Info: you can still get ooms, then just retry but its still going to be faster when it works using the quantization<br><br>
-
+Try more codec steps now since its faster
 
 Download the [Model](https://huggingface.co/HeartMuLa/HeartMuLa-oss-3B)  
 Download the : [Workflow](https://github.com/Absynth-Vibe-Coding/Heart-Mula-Comfy-UI/blob/main/HeartMula%20Absynth%20v1.0.json)
