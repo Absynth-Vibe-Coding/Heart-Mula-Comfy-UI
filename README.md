@@ -4,7 +4,8 @@
   <p><em>Generate music from lyrics using HeartMuLa in ComfyUI</em></p>
 </div>
 
-<img width="1681" height="611" alt="image" src="https://github.com/user-attachments/assets/75293383-c49b-4bc6-9f88-84fd8c8e94ab" />
+<img width="1511" height="615" alt="image" src="https://github.com/user-attachments/assets/87f10bd3-46a5-49f3-87af-e9461659ce26" />
+
 
 <h2>NEWS</strong></h2>
 <strong>v1.1: added quantization options for lower vram</strong><br>
