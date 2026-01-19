@@ -9,7 +9,7 @@
 <h2>NEWS</strong></h2>
 V1.1 added quantization options for lower vram<br>
 -int8 - ~50% VRAM reduction<br>
--int4 - ~75% VRAM reduction (uses nf4 quantization)<br>
+-int4 - ~75% VRAM reduction (uses nf4 quantization)<br><br><br>
 
 
 
