@@ -13,7 +13,7 @@
 -int4 - ~75% VRAM reduction (uses nf4 quantization) <-fastest <br><br> 
 
 Info: you can still get ooms, then just retry but its still going to be faster when it works using the quantization<br><br>
-Try more codec steps now since its faster, depends on how much vram you have. on 16gb vram use codec steps 2 else you probably get ooms
+Try more codec steps now since its faster, depends on how much vram you have. on 16gb vram use codec steps 1 or 2 else you probably get ooms
 If it starts geting really slow then restart comfy.
 
 --------------------------------------------------------------------------------------------------------------------------------
