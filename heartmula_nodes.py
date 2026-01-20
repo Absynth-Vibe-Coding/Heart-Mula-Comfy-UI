@@ -38,29 +38,29 @@ torchaudio.load = _torchaudio_load_soundfile
 HEARTMULA_MODELS_DIR = os.path.join(folder_paths.models_dir, "heartmula")
 os.makedirs(HEARTMULA_MODELS_DIR, exist_ok=True)
 
-# Genre presets: display name -> tags (comma-separated, NO spaces after commas)
+# Genre presets: display name -> tags (comma-space separated)
 GENRE_TAGS = {
-    "EDM - Trance": "trance,electronic,synthesizer,energetic,driving,euphoric",
-    "EDM - House": "house,electronic,synthesizer,drum machine,groovy,dance",
-    "EDM - Techno": "techno,electronic,synthesizer,drum machine,dark,hypnotic",
-    "EDM - Dubstep": "dubstep,electronic,synthesizer,bass,heavy,aggressive",
-    "Pop - Upbeat": "pop,upbeat,energetic,synthesizer,drums,catchy",
-    "Pop - Ballad": "pop,ballad,emotional,piano,strings,romantic",
-    "Rock - Alternative": "rock,alternative,electric guitar,drums,energetic",
-    "Rock - Indie": "rock,indie,guitar,drums,emotional,melodic",
-    "Metal": "metal,heavy,electric guitar,drums,powerful,aggressive",
-    "Hip Hop - Trap": "hip hop,trap,drum machine,bass,808,dark",
-    "Hip Hop - Boom Bap": "hip hop,boom bap,drums,sampling,groovy,old school",
-    "R&B": "r&b,soul,keyboard,smooth,romantic,groovy",
-    "Jazz": "jazz,smooth,piano,saxophone,relaxing,sophisticated",
-    "Classical": "classical,orchestral,strings,piano,epic,cinematic",
-    "Ambient": "ambient,chill,synthesizer,soft,peaceful,atmospheric",
-    "Lo-Fi": "lo-fi,chill,relaxing,piano,soft,nostalgic",
-    "Country": "country,acoustic,acoustic guitar,warm,heartfelt",
-    "Reggae": "reggae,chill,guitar,drums,relaxing,tropical",
-    "Funk": "funk,groovy,bass,drums,energetic,rhythmic",
-    "Disco": "disco,retro,synthesizer,drums,groovy,dance",
-    "Synthwave": "synthwave,retro,80s,synthesizer,electronic,nostalgic",
+    "Trance": "trance, energetic, electronic, synthesizer, drum machine, self-discovery",
+    "House": "house, energetic, electronic, synthesizer, drum machine, groovy",
+    "Techno": "techno, energetic, electronic, synthesizer, drum machine, dark",
+    "Dubstep": "dubstep, energetic, electronic, synthesizer, bass, heavy",
+    "Pop": "pop, energetic, synthesizer, drums, catchy, upbeat",
+    "Ballad": "ballad, emotional, piano, strings, romantic, heartfelt",
+    "Rock": "rock, energetic, electric guitar, drums, powerful, driving",
+    "Indie": "indie, emotional, guitar, drums, melodic, atmospheric",
+    "Metal": "metal, heavy, electric guitar, drums, powerful, aggressive",
+    "Hip Hop": "hip hop, energetic, drum machine, bass, 808, groovy",
+    "Trap": "trap, energetic, drum machine, bass, 808, dark",
+    "R&B": "r&b, smooth, keyboard, romantic, groovy, soulful",
+    "Jazz": "jazz, smooth, piano, saxophone, relaxing, sophisticated",
+    "Classical": "classical, orchestral, strings, piano, epic, cinematic",
+    "Ambient": "ambient, chill, synthesizer, soft, peaceful, atmospheric",
+    "Lo-Fi": "lo-fi, chill, relaxing, piano, soft, nostalgic",
+    "Country": "country, acoustic, acoustic guitar, warm, heartfelt",
+    "Reggae": "reggae, chill, guitar, drums, relaxing, tropical",
+    "Funk": "funk, groovy, bass, drums, energetic, rhythmic",
+    "Disco": "disco, retro, synthesizer, drums, groovy, dance",
+    "Synthwave": "synthwave, retro, 80s, synthesizer, electronic, nostalgic",
     "custom": "",
 }
 
@@ -99,8 +99,8 @@ class HeartMuLaLoader:
                     "tooltip": "Model version to load"
                 }),
                 "quantization": (["none", "int8", "int4"], {
-                    "default": "none",
-                    "tooltip": "BitsAndBytes quantization: none=full precision, int8=~50% VRAM, int4=~75% VRAM reduction"
+                    "default": "int4",
+                    "tooltip": "int4 uses least VRAM, int8 is balanced, none is full precision"
                 }),
             }
         }
@@ -116,7 +116,9 @@ class HeartMuLaLoader:
         # Force refresh of model list
         return float("nan")
 
-    def load_model(self, model_name: str, version: str, quantization: str = "none"):
+    def load_model(self, model_name: str, version: str, quantization: str = "int4"):
+        import gc
+
         if model_name == "no models found":
             raise ValueError(f"No HeartMuLa models found in {HEARTMULA_MODELS_DIR}. Please download a model.")
 
@@ -130,16 +132,28 @@ class HeartMuLaLoader:
         if cache_key in self._model_cache:
             return (self._model_cache[cache_key],)
 
-        # Free up VRAM before loading large model
+        # Clear any existing cached models
+        keys_to_remove = [k for k in self._model_cache.keys() if k != cache_key]
+        for key in keys_to_remove:
+            print(f"[HeartMuLa] Removing cached model: {key}")
+            del self._model_cache[key]
+
+        # Aggressive VRAM cleanup before loading
         comfy.model_management.unload_all_models()
         comfy.model_management.soft_empty_cache()
+        gc.collect()
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+            torch.cuda.synchronize()
 
         from heartlib import HeartMuLaGenPipeline
 
         device = comfy.model_management.get_torch_device()
 
-        # Setup BitsAndBytes quantization config
+        # Setup quantization config
         bnb_config = None
+        load_dtype = torch.float16
+
         if quantization == "int8":
             from transformers import BitsAndBytesConfig
             bnb_config = BitsAndBytesConfig(load_in_8bit=True)
@@ -150,14 +164,21 @@ class HeartMuLaLoader:
                 load_in_4bit=True,
                 bnb_4bit_use_double_quant=True,
                 bnb_4bit_quant_type="nf4",
-                bnb_4bit_compute_dtype=torch.bfloat16,
+                bnb_4bit_compute_dtype=torch.float16,
             )
             print("[HeartMuLa] Loading with int4 quantization")
+        else:
+            print("[HeartMuLa] Loading without quantization (full precision)")
+
+        # Clear memory again right before loading
+        gc.collect()
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
 
         pipe = HeartMuLaGenPipeline.from_pretrained(
             model_path,
             version=version,
-            dtype=torch.bfloat16,
+            dtype=load_dtype,
             device=device,
             bnb_config=bnb_config,
         )
@@ -180,7 +201,7 @@ class HeartMuLaGenerate:
                     "tooltip": "Lyrics with section markers like [verse], [chorus], etc."
                 }),
                 "genre": (GENRE_PRESETS, {
-                    "default": "edm, trance",
+                    "default": "Trance",
                     "tooltip": "Select a genre preset or 'custom' to use custom_tags"
                 }),
                 "custom_tags": ("STRING", {
@@ -190,11 +211,11 @@ class HeartMuLaGenerate:
             },
             "optional": {
                 "max_duration_sec": ("INT", {
-                    "default": 40,
+                    "default": 20,
                     "min": 5,
                     "max": 240,
                     "step": 5,
-                    "tooltip": "Max audio duration in seconds. Steps: 5s=63, 10s=125, 20s=250, 30s=375, 60s=750, 120s=1500 (1 step = 80ms)"
+                    "tooltip": "Max audio duration. VRAM scales with duration: 20s needs ~10GB, 40s needs ~12GB, 60s+ needs 16GB+"
                 }),
                 "temperature": ("FLOAT", {
                     "default": 1.0,
@@ -251,6 +272,8 @@ class HeartMuLaGenerate:
         codec_steps: int = 5,
         seed: int = 0,
     ):
+        import gc
+
         if seed != 0:
             torch.manual_seed(seed)
 
@@ -276,6 +299,12 @@ class HeartMuLaGenerate:
         print(f"[HeartMuLa] max_duration_sec received: {max_duration_sec}")
         print(f"[HeartMuLa] Generating {max_duration_sec}s audio ({steps} steps, {max_audio_length_ms}ms)")
 
+        # Clear VRAM before generation to maximize available memory
+        comfy.model_management.soft_empty_cache()
+        gc.collect()
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+
         # Patch tqdm to support cancellation
         import heartlib.pipelines.music_generation as hm_gen
         from tqdm import tqdm as original_tqdm
@@ -293,6 +322,39 @@ class HeartMuLaGenerate:
         hm_gen.tqdm = InterruptibleTqdm
 
         try:
+            # Patch the codec's detokenize to offload LLM and clear memory before running
+            original_detokenize = model.audio_codec.detokenize
+            _llm_offloaded = [False]  # Use list to allow mutation in nested function
+
+            def memory_saving_detokenize(codes, *args, **kwargs):
+                # Offload the main LLM model to CPU before codec decoding
+                # This frees up significant VRAM since the LLM is no longer needed
+                if not _llm_offloaded[0]:
+                    print("[HeartMuLa] Offloading LLM to CPU for codec decoding...")
+                    try:
+                        # Reset KV caches first
+                        model.model.reset_caches()
+                    except Exception:
+                        pass
+                    try:
+                        # Move main model to CPU
+                        model.model.to('cpu')
+                        _llm_offloaded[0] = True
+                        print("[HeartMuLa] LLM moved to CPU")
+                    except Exception as e:
+                        print(f"[HeartMuLa] Could not offload LLM: {e}")
+
+                    # Aggressive VRAM cleanup
+                    gc.collect()
+                    if torch.cuda.is_available():
+                        torch.cuda.empty_cache()
+                        torch.cuda.synchronize()
+                    print("[HeartMuLa] VRAM cleared for codec")
+
+                return original_detokenize(codes, *args, **kwargs)
+
+            model.audio_codec.detokenize = memory_saving_detokenize
+
             # Run generation - inputs dict separate from kwargs
             print(f"[HeartMuLa] Using codec_steps={codec_steps}")
             model(
@@ -304,6 +366,9 @@ class HeartMuLaGenerate:
                 cfg_scale=cfg_scale,
                 codec_steps=codec_steps,
             )
+
+            # Restore original detokenize
+            model.audio_codec.detokenize = original_detokenize
 
             # Load the generated audio
             print("[HeartMuLa] Loading generated audio...")
@@ -327,12 +392,25 @@ class HeartMuLaGenerate:
             return ({"waveform": waveform, "sample_rate": 44100},)
 
         finally:
-            # Restore original tqdm
+            # Restore original functions
             hm_gen.tqdm = original_tqdm
+            model.audio_codec.detokenize = original_detokenize
+            # Move LLM back to GPU for next generation
+            if _llm_offloaded[0]:
+                try:
+                    device = comfy.model_management.get_torch_device()
+                    model.model.to(device)
+                    print(f"[HeartMuLa] LLM moved back to {device}")
+                except Exception as e:
+                    print(f"[HeartMuLa] Warning: Could not move LLM back to GPU: {e}")
             # Cleanup temp files
             for path in [lyrics_path, tags_path]:
                 if os.path.exists(path):
                     os.remove(path)
+            # Clear VRAM after generation
+            gc.collect()
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
 
 
 class HeartMuLaGenerateFromFiles:
@@ -348,7 +426,7 @@ class HeartMuLaGenerateFromFiles:
                     "tooltip": "Path to lyrics .txt file"
                 }),
                 "genre": (GENRE_PRESETS, {
-                    "default": "edm, trance",
+                    "default": "Trance",
                     "tooltip": "Select a genre preset or 'custom' to use tags_file"
                 }),
                 "tags_file": ("STRING", {
@@ -414,6 +492,8 @@ class HeartMuLaGenerateFromFiles:
         codec_steps: int = 5,
         seed: int = 0,
     ):
+        import gc
+
         if seed != 0:
             torch.manual_seed(seed)
 
@@ -424,31 +504,82 @@ class HeartMuLaGenerateFromFiles:
             actual_tags_file = tags_file
         else:
             tags = GENRE_TAGS.get(genre, genre)
+            print(f"[HeartMuLa] Using tags: {tags}")
             with tempfile.NamedTemporaryFile(mode='w', suffix='.txt', delete=False, encoding='utf-8') as f:
                 f.write(tags)
                 actual_tags_file = f.name
 
-        model(
-            {"lyrics": lyrics_file, "tags": actual_tags_file},
-            save_path=output_path,
-            max_audio_length_ms=max_duration_sec * 1000,
-            topk=topk,
-            temperature=temperature,
-            cfg_scale=cfg_scale,
-            codec_steps=codec_steps,
-        )
+        # Clear VRAM before generation
+        comfy.model_management.soft_empty_cache()
+        gc.collect()
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
 
-        # Cleanup temp tags file if we created one
-        if genre != "custom" and os.path.exists(actual_tags_file):
-            os.remove(actual_tags_file)
+        # Patch the codec's detokenize to offload LLM and clear memory before running
+        original_detokenize = model.audio_codec.detokenize
+        _llm_offloaded = [False]
 
-        waveform, sample_rate = torchaudio.load(output_path)
-        waveform = waveform.unsqueeze(0)
+        def memory_saving_detokenize(codes, *args, **kwargs):
+            if not _llm_offloaded[0]:
+                print("[HeartMuLa] Offloading LLM to CPU for codec decoding...")
+                try:
+                    model.model.reset_caches()
+                except Exception:
+                    pass
+                try:
+                    model.model.to('cpu')
+                    _llm_offloaded[0] = True
+                    print("[HeartMuLa] LLM moved to CPU")
+                except Exception as e:
+                    print(f"[HeartMuLa] Could not offload LLM: {e}")
 
-        return ({
-            "waveform": waveform,
-            "sample_rate": sample_rate,
-        },)
+                gc.collect()
+                if torch.cuda.is_available():
+                    torch.cuda.empty_cache()
+                    torch.cuda.synchronize()
+                print("[HeartMuLa] VRAM cleared for codec")
+
+            return original_detokenize(codes, *args, **kwargs)
+
+        model.audio_codec.detokenize = memory_saving_detokenize
+
+        try:
+            model(
+                {"lyrics": lyrics_file, "tags": actual_tags_file},
+                save_path=output_path,
+                max_audio_length_ms=max_duration_sec * 1000,
+                topk=topk,
+                temperature=temperature,
+                cfg_scale=cfg_scale,
+                codec_steps=codec_steps,
+            )
+
+            waveform, sample_rate = torchaudio.load(output_path)
+            waveform = waveform.unsqueeze(0)
+
+            return ({
+                "waveform": waveform,
+                "sample_rate": sample_rate,
+            },)
+
+        finally:
+            # Restore original detokenize
+            model.audio_codec.detokenize = original_detokenize
+            # Move LLM back to GPU for next generation
+            if _llm_offloaded[0]:
+                try:
+                    device = comfy.model_management.get_torch_device()
+                    model.model.to(device)
+                    print(f"[HeartMuLa] LLM moved back to {device}")
+                except Exception as e:
+                    print(f"[HeartMuLa] Warning: Could not move LLM back to GPU: {e}")
+            # Cleanup temp tags file if we created one
+            if genre != "custom" and os.path.exists(actual_tags_file):
+                os.remove(actual_tags_file)
+            # Clear VRAM after generation
+            gc.collect()
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
 
 
 NODE_CLASS_MAPPINGS = {
