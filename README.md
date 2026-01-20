@@ -10,7 +10,7 @@
 <h2>NEWS</h2>
 
 <strong>v1.2:</strong> fixed the ooms so far: model is moved to CPU before the codec decoding runs. This frees up several GB of VRAM 😎
-<br>improved the preset system and my workflow. cfg 1.5 - 2 or higher recommended to follow the presets better <- but then it will be slower
+<br>improved the preset system and my workflow. cfg 1.5 - 2 or higher recommended to follow the presets better <- but then it will be slower.<br>
 Even on 16 gb Vram you can now also do higher codec steps <-better quality
 
 -------------------------------------------------------------------------------------------------------------------------------
