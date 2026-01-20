@@ -8,6 +8,12 @@
 
 
 <h2>NEWS</strong></h2>
+
+<strong>v1.2: fixed the ooms so far: model is moved to CPU before the codec decoding runs. This frees up several GB of VRAM 😎
+<br>improved the preset system and my workflow. cfg 1.5 - 2 or higher recommended to follow the presets better
+
+-------------------------------------------------------------------------------------------------------------------------------
+
 <strong>v1.1: added quantization options for lower vram</strong><br>
 -int8 - ~50% VRAM reduction<br>
 -int4 - ~75% VRAM reduction (uses nf4 quantization) <-fastest <br><br> 
