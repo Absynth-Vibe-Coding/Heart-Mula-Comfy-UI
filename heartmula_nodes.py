@@ -40,28 +40,13 @@ os.makedirs(HEARTMULA_MODELS_DIR, exist_ok=True)
 
 # Genre presets: display name -> tags (comma-space separated)
 GENRE_TAGS = {
-    "Trance": "trance, energetic, electronic, synthesizer, drum machine, self-discovery",
-    "House": "house, energetic, electronic, synthesizer, drum machine, groovy",
-    "Techno": "techno, energetic, electronic, synthesizer, drum machine, dark",
-    "Dubstep": "dubstep, energetic, electronic, synthesizer, bass, heavy",
-    "Pop": "pop, energetic, synthesizer, drums, catchy, upbeat",
-    "Ballad": "ballad, emotional, piano, strings, romantic, heartfelt",
-    "Rock": "rock, energetic, electric guitar, drums, powerful, driving",
-    "Indie": "indie, emotional, guitar, drums, melodic, atmospheric",
-    "Metal": "metal, heavy, electric guitar, drums, powerful, aggressive",
-    "Hip Hop": "hip hop, energetic, drum machine, bass, 808, groovy",
-    "Trap": "trap, energetic, drum machine, bass, 808, dark",
-    "R&B": "r&b, smooth, keyboard, romantic, groovy, soulful",
-    "Jazz": "jazz, smooth, piano, saxophone, relaxing, sophisticated",
-    "Classical": "classical, orchestral, strings, piano, epic, cinematic",
-    "Ambient": "ambient, chill, synthesizer, soft, peaceful, atmospheric",
-    "Lo-Fi": "lo-fi, chill, relaxing, piano, soft, nostalgic",
-    "Country": "country, acoustic, acoustic guitar, warm, heartfelt",
-    "Reggae": "reggae, chill, guitar, drums, relaxing, tropical",
-    "Funk": "funk, groovy, bass, drums, energetic, rhythmic",
-    "Disco": "disco, retro, synthesizer, drums, groovy, dance",
-    "Synthwave": "synthwave, retro, 80s, synthesizer, electronic, nostalgic",
     "custom": "",
+    "Rap": "male voice, rap, hip hop, boombap",
+    "Pop": "pop, energetic, synthesizer, drums, catchy, upbeat",
+    "R&B": "r&b, smooth, keyboard, romantic, groovy, soulful",
+    "Ballad": "ballad, emotional, piano, strings, romantic, heartfelt",
+    "Electronic": "electronic, energetic, synthesizer, drum machine",
+    "Rock": "rock, energetic, electric guitar, drums, powerful, driving",
 }
 
 GENRE_PRESETS = list(GENRE_TAGS.keys())
@@ -201,8 +186,8 @@ class HeartMuLaGenerate:
                     "tooltip": "Lyrics with section markers like [verse], [chorus], etc."
                 }),
                 "genre": (GENRE_PRESETS, {
-                    "default": "Trance",
-                    "tooltip": "Select a genre preset or 'custom' to use custom_tags"
+                    "default": "custom",
+                    "tooltip": "Genre presets with tags:\ncustom: use custom_tags field\nRap: male voice, rap, hip hop, boombap\nPop: pop, energetic, synthesizer, drums, catchy, upbeat\nR&B: r&b, smooth, keyboard, romantic, groovy, soulful\nBallad: ballad, emotional, piano, strings, romantic, heartfelt\nElectronic: electronic, energetic, synthesizer, drum machine\nRock: rock, energetic, electric guitar, drums, powerful, driving"
                 }),
                 "custom_tags": ("STRING", {
                     "default": "",
@@ -426,8 +411,8 @@ class HeartMuLaGenerateFromFiles:
                     "tooltip": "Path to lyrics .txt file"
                 }),
                 "genre": (GENRE_PRESETS, {
-                    "default": "Trance",
-                    "tooltip": "Select a genre preset or 'custom' to use tags_file"
+                    "default": "custom",
+                    "tooltip": "Genre presets with tags:\ncustom: use tags_file field\nRap: male voice, rap, hip hop, boombap\nPop: pop, energetic, synthesizer, drums, catchy, upbeat\nR&B: r&b, smooth, keyboard, romantic, groovy, soulful\nBallad: ballad, emotional, piano, strings, romantic, heartfelt\nElectronic: electronic, energetic, synthesizer, drum machine\nRock: rock, energetic, electric guitar, drums, powerful, driving"
                 }),
                 "tags_file": ("STRING", {
                     "default": "",

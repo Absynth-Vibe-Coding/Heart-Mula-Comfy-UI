@@ -1,0 +1,181 @@
+{
+  "id": "07da0e0d-8e34-4762-8dcf-981e53a275bd",
+  "revision": 0,
+  "last_node_id": 33,
+  "last_link_id": 25,
+  "nodes": [
+    {
+      "id": 19,
+      "type": "HeartMuLaLoader",
+      "pos": [
+        -406.4185235691818,
+        3085.54911647739
+      ],
+      "size": [
+        398.1984531576809,
+        106
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "model",
+          "type": "HEARTMULA_MODEL",
+          "links": [
+            25
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "HeartMuLaLoader"
+      },
+      "widgets_values": [
+        "HeartMuLa-3B",
+        "3B",
+        "int4"
+      ],
+      "color": "#233",
+      "bgcolor": "#355"
+    },
+    {
+      "id": 9,
+      "type": "Note",
+      "pos": [
+        -447.40282829053064,
+        3259.1784609648153
+      ],
+      "size": [
+        482.3280246746098,
+        550.4850482135294
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {},
+      "widgets_values": [
+        "\n\n\n         █████╗ ██████╗ ███████╗██╗   ██╗███╗   ██╗████████╗██╗  ██╗\n        ██╔══██╗██╔══██╗██╔════╝╚██╗ ██╔╝████╗  ██║╚══██╔══╝██║  ██║\n        ███████║██████╔╝███████╗ ╚████╔╝ ██╔██╗ ██║   ██║   ███████║\n        ██╔══██║██╔══██╗╚════██║  ╚██╔╝  ██║╚██╗██║   ██║   ██╔══██║\n        ██║  ██║██████╔╝███████║   ██║   ██║ ╚████║   ██║   ██║  ██║\n        ╚═╝  ╚═╝╚═════╝ ╚══════╝   ╚═╝   ╚═╝  ╚═══╝   ╚═╝   ╚═╝  ╚═╝ \n\n                 https://absynth-vibe-coding.github.io/\n\n                  If you like this follow me on my \n               YouTube channel Electric Dreams, thx! \n                 \n                     HeartMula for ComfyUI v1.3\n\n                        Better speed: cfg 1\n         codec_steps 1-5: 1 \"fast\" and still really good quality\n                   2: better quality and still ok speed\n   \n                     Minimum 16gb VRAM, it uses all of it\n          \n\n\n                  Quantizaton: saves VRAM -> Faster\n\n                  - none - Full precision (default)\n                  - int8 - ~50% VRAM reduction\n                  - int4 - ~75% VRAM reduction (uses nf4 quantization)\n                \n                         20 sec= 250 steps                  \n                         40 sec= 500 steps\n                         60 sec= 750 steps\n \n                  Custom Tags try for example: \n     energetic, electronic, synthesizer, drum machine, self- discovery\n          \n              more tags on https://heartmula.github.io/\n"
+      ],
+      "color": "#233",
+      "bgcolor": "#355"
+    },
+    {
+      "id": 26,
+      "type": "HeartMuLaGenerate",
+      "pos": [
+        66.32878093672048,
+        3085.7668145593307
+      ],
+      "size": [
+        528.21130913918,
+        715.5011330638072
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "HEARTMULA_MODEL",
+          "link": 25
+        }
+      ],
+      "outputs": [
+        {
+          "name": "audio",
+          "type": "AUDIO",
+          "links": [
+            22
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "HeartMuLaGenerate"
+      },
+      "widgets_values": [
+        "[Verse 1]\nYou were the shadow to my light\nDid you feel us?\nAnother star, you fade away\nAfraid our aim is out of sight\nWanna see us alight\n\n[Pre-Chorus]\nWhere are you now?\nWhere are you now?\nWhere are you now?\nWas it all in my fantasy?\nWhere are you now?\nWere you only imaginary?\n\n[Chorus]\nWhere are you now?\nAtlantis, under the sea, under the sea\nWhere are you now? Another dream\nThe monster's running wild inside of me\nI'm faded, I'm faded\nSo lost, I'm faded, I'm faded\nSo lost, I'm faded\n\n[Verse 2]\nThese shallow waters never met what I needed\nI'm letting go, a deeper dive\nEternal silence of the sea\nI'm breathing, alive\n\n[Pre-Chorus]\nWhere are you now?\nWhere are you now?\nUnder the bright but faded lights\nYou set my heart on fire\nWhere are you now?\nWhere are you now?\n\n[Chorus]\nWhere are you now?\nAtlantis, under the sea, under the sea\nWhere are you now? Another dream\nThe monster's running wild inside of me\nI'm faded, I'm faded\nSo lost, I'm faded, I'm faded\nSo lost, I'm faded",
+        "Electronic",
+        "",
+        80,
+        2,
+        50,
+        1.6,
+        20,
+        2349559338,
+        "randomize"
+      ],
+      "color": "#233",
+      "bgcolor": "#355"
+    },
+    {
+      "id": 7,
+      "type": "PreviewAudio",
+      "pos": [
+        660.78734080247,
+        3085.991593230653
+      ],
+      "size": [
+        291.82470324388873,
+        92.74450070519288
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "audio",
+          "type": "AUDIO",
+          "link": 22
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.9.2",
+        "Node name for S&R": "PreviewAudio"
+      },
+      "widgets_values": [],
+      "color": "#233",
+      "bgcolor": "#355"
+    }
+  ],
+  "links": [
+    [
+      22,
+      26,
+      0,
+      7,
+      0,
+      "AUDIO"
+    ],
+    [
+      25,
+      19,
+      0,
+      26,
+      0,
+      "HEARTMULA_MODEL"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "workflowRendererVersion": "LG",
+    "ds": {
+      "scale": 1.4026765751590262,
+      "offset": [
+        451.16633098402934,
+        -3346.371500970656
+      ]
+    },
+    "frontendVersion": "1.36.14",
+    "VHS_latentpreview": false,
+    "VHS_latentpreviewrate": 0,
+    "VHS_MetadataImage": true,
+    "VHS_KeepIntermediate": true
+  },
+  "version": 0.4
+}
