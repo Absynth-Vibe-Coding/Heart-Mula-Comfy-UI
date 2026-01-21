@@ -41,7 +41,7 @@ Download the Workflow
 <h2>Features</h2>
 
 - select genre preset (uses tags)
-- custom tags: seperate with comma
+- custom tags: seperate with comma, example for rap: male voice, rap, hip hop, boombap
 - adjust codec steps: 1 is already very good, but you can go higher (better quality)
 
 <img width="756" height="823" alt="image" src="https://github.com/user-attachments/assets/bef44d3e-00d4-42f8-a1c8-5237c8dfe712" />
