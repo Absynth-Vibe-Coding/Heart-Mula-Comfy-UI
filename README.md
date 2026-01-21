@@ -25,7 +25,7 @@ If it starts geting really slow then restart comfy.
 
 --------------------------------------------------------------------------------------------------------------------------------
 
-Download the [Model](https://huggingface.co/HeartMuLa/HeartMuLa-oss-3B)  
+Download the [Model](https://huggingface.co/HeartMuLa/HeartMuLa-oss-3B) You need all of the files
 Download the Workflow
 <br>If you like this: Subscribe to my YouTube Channel https://www.youtube.com/@Electric-Dreamz
 
