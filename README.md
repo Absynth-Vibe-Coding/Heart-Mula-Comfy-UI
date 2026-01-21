@@ -10,6 +10,7 @@
 <h2>NEWS</h2>
 
 v1.3 Added Rap to the preset list, removed not supported genre presets and made some finetuning, could reproduce Rap and EDM now with the new workflow settings
+For Rap Temp 1 could work better
 
 ---------------------------------------------------------------------------------------------------------------------------------
 
