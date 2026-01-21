@@ -44,12 +44,12 @@ Download the Workflow
 - custom tags: seperate with comma, example for rap: male voice, rap, hip hop, boombap
 - adjust codec steps: 1 is already very good, but you can go higher (better quality)
 
-<img width="756" height="823" alt="image" src="https://github.com/user-attachments/assets/bef44d3e-00d4-42f8-a1c8-5237c8dfe712" />
+<img width="733" height="277" alt="image" src="https://github.com/user-attachments/assets/db47176f-cc65-406a-aae8-385c63500574" />
+
 
 
 <ul>
-  <li><strong>Genre Presets</strong> - EDM, Hip Hop, Rock, Jazz, Lo-Fi, and more</li>
-  <li><strong>Custom Tags</strong> - Full control over style with comma-separated tags</li>
+   <li><strong>Custom Tags</strong> - Full control over style with comma-separated tags</li>
   <li><strong>Adjustable Duration</strong> - Generate 5 seconds to 4 minutes of audio</li>
   <li><strong>Windows Compatible</strong> - Includes torchcodec workaround</li>
 </ul>
