@@ -114,14 +114,11 @@ class HeartMuLaLoader:
 
         cache_key = f"{model_path}_{version}_{quantization}"
 
-        if cache_key in self._model_cache:
-            return (self._model_cache[cache_key],)
-
-        # Clear any existing cached models
-        keys_to_remove = [k for k in self._model_cache.keys() if k != cache_key]
-        for key in keys_to_remove:
-            print(f"[HeartMuLa] Removing cached model: {key}")
-            del self._model_cache[key]
+        # Disable caching - causes state corruption when cfg_scale changes between runs
+        # Always clear cache and reload model
+        if self._model_cache:
+            print("[HeartMuLa] Clearing model cache")
+            self._model_cache.clear()
 
         # Aggressive VRAM cleanup before loading
         comfy.model_management.unload_all_models()
@@ -314,6 +311,17 @@ class HeartMuLaGenerate:
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
 
+        # Reset and setup KV caches with correct batch size (cfg_scale > 1 uses batch_size=2)
+        try:
+            model.model.reset_caches()
+            # Determine batch size based on cfg_scale
+            batch_size = 2 if cfg_scale > 1.0 else 1
+            # Setup caches with correct batch size - this reinitializes the KV cache
+            model.model.setup_caches(batch_size=batch_size, dtype=torch.float16)
+            print(f"[HeartMuLa] KV cache setup for batch_size={batch_size}")
+        except Exception as e:
+            print(f"[HeartMuLa] Warning: Could not setup caches: {e}")
+
         # Patch tqdm to support cancellation
         import heartlib.pipelines.music_generation as hm_gen
         from tqdm import tqdm as original_tqdm
@@ -407,7 +415,7 @@ class HeartMuLaGenerate:
             hm_gen.tqdm = original_tqdm
             if has_audio_codec and original_detokenize is not None:
                 model.audio_codec.detokenize = original_detokenize
-            # Move LLM back to GPU for next generation
+            # Move LLM back to GPU for next generation (only if we offloaded it)
             if _llm_offloaded[0]:
                 try:
                     device = comfy.model_management.get_torch_device()
