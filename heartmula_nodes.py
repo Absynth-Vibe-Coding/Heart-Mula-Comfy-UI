@@ -330,10 +330,12 @@ class HeartMuLaGenerate:
         # Temporarily replace tqdm in heartlib
         hm_gen.tqdm = InterruptibleTqdm
 
+        # Initialize before try block so finally can always access them
+        original_detokenize = model.audio_codec.detokenize
+        _llm_offloaded = [False]  # Use list to allow mutation in nested function
+
         try:
             # Patch the codec's detokenize to offload LLM and clear memory before running
-            original_detokenize = model.audio_codec.detokenize
-            _llm_offloaded = [False]  # Use list to allow mutation in nested function
 
             def memory_saving_detokenize(codes, *args, **kwargs):
                 # Offload the main LLM model to CPU before codec decoding
