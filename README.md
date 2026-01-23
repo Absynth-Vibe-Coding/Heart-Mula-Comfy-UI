@@ -12,6 +12,10 @@
 Fixed several bugs. If you had issues with the node try it again now :-)<br>
 Thx to user Illymir for testing!
 
+Resolved an issue where switching cfg_scale would cause crashes with "batch size mismatch" or "mat1 and mat2 shapes cannot be multiplied" errors. <br> 
+The model's internal state was getting corrupted when reusing cached models with different CFG settings. <br>
+Model caching is now disabled to ensure clean state for each generation. <br>
+
 ---------------------------------------------------------------------------------------------------------------------------------
 
 
