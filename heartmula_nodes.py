@@ -331,12 +331,13 @@ class HeartMuLaGenerate:
         hm_gen.tqdm = InterruptibleTqdm
 
         # Initialize before try block so finally can always access them
-        original_detokenize = model.audio_codec.detokenize
         _llm_offloaded = [False]  # Use list to allow mutation in nested function
 
-        try:
-            # Patch the codec's detokenize to offload LLM and clear memory before running
+        # Check if model has audio_codec with detokenize (for memory optimization patch)
+        has_audio_codec = hasattr(model, 'audio_codec') and hasattr(model.audio_codec, 'detokenize')
+        original_detokenize = model.audio_codec.detokenize if has_audio_codec else None
 
+        if has_audio_codec:
             def memory_saving_detokenize(codes, *args, **kwargs):
                 # Offload the main LLM model to CPU before codec decoding
                 # This frees up significant VRAM since the LLM is no longer needed
@@ -366,6 +367,8 @@ class HeartMuLaGenerate:
 
             model.audio_codec.detokenize = memory_saving_detokenize
 
+        try:
+
             # Run generation - inputs dict separate from kwargs
             print(f"[HeartMuLa] Using codec_steps={codec_steps}")
             model(
@@ -377,9 +380,6 @@ class HeartMuLaGenerate:
                 cfg_scale=cfg_scale,
                 codec_steps=codec_steps,
             )
-
-            # Restore original detokenize
-            model.audio_codec.detokenize = original_detokenize
 
             # Load the generated audio
             print("[HeartMuLa] Loading generated audio...")
@@ -405,7 +405,8 @@ class HeartMuLaGenerate:
         finally:
             # Restore original functions
             hm_gen.tqdm = original_tqdm
-            model.audio_codec.detokenize = original_detokenize
+            if has_audio_codec and original_detokenize is not None:
+                model.audio_codec.detokenize = original_detokenize
             # Move LLM back to GPU for next generation
             if _llm_offloaded[0]:
                 try:
@@ -526,33 +527,35 @@ class HeartMuLaGenerateFromFiles:
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
 
-        # Patch the codec's detokenize to offload LLM and clear memory before running
-        original_detokenize = model.audio_codec.detokenize
+        # Check if model has audio_codec with detokenize (for memory optimization patch)
         _llm_offloaded = [False]
+        has_audio_codec = hasattr(model, 'audio_codec') and hasattr(model.audio_codec, 'detokenize')
+        original_detokenize = model.audio_codec.detokenize if has_audio_codec else None
 
-        def memory_saving_detokenize(codes, *args, **kwargs):
-            if not _llm_offloaded[0]:
-                print("[HeartMuLa] Offloading LLM to CPU for codec decoding...")
-                try:
-                    model.model.reset_caches()
-                except Exception:
-                    pass
-                try:
-                    model.model.to('cpu')
-                    _llm_offloaded[0] = True
-                    print("[HeartMuLa] LLM moved to CPU")
-                except Exception as e:
-                    print(f"[HeartMuLa] Could not offload LLM: {e}")
+        if has_audio_codec:
+            def memory_saving_detokenize(codes, *args, **kwargs):
+                if not _llm_offloaded[0]:
+                    print("[HeartMuLa] Offloading LLM to CPU for codec decoding...")
+                    try:
+                        model.model.reset_caches()
+                    except Exception:
+                        pass
+                    try:
+                        model.model.to('cpu')
+                        _llm_offloaded[0] = True
+                        print("[HeartMuLa] LLM moved to CPU")
+                    except Exception as e:
+                        print(f"[HeartMuLa] Could not offload LLM: {e}")
 
-                gc.collect()
-                if torch.cuda.is_available():
-                    torch.cuda.empty_cache()
-                    torch.cuda.synchronize()
-                print("[HeartMuLa] VRAM cleared for codec")
+                    gc.collect()
+                    if torch.cuda.is_available():
+                        torch.cuda.empty_cache()
+                        torch.cuda.synchronize()
+                    print("[HeartMuLa] VRAM cleared for codec")
 
-            return original_detokenize(codes, *args, **kwargs)
+                return original_detokenize(codes, *args, **kwargs)
 
-        model.audio_codec.detokenize = memory_saving_detokenize
+            model.audio_codec.detokenize = memory_saving_detokenize
 
         try:
             model(
@@ -575,7 +578,8 @@ class HeartMuLaGenerateFromFiles:
 
         finally:
             # Restore original detokenize
-            model.audio_codec.detokenize = original_detokenize
+            if has_audio_codec and original_detokenize is not None:
+                model.audio_codec.detokenize = original_detokenize
             # Move LLM back to GPU for next generation
             if _llm_offloaded[0]:
                 try:
