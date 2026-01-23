@@ -160,32 +160,37 @@ class HeartMuLaLoader:
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
 
-        # Check if heartlib supports bnb_config parameter
+        # Check which parameters heartlib supports (API varies between versions)
         import inspect
         sig = inspect.signature(HeartMuLaGenPipeline.from_pretrained)
-        supports_bnb_config = 'bnb_config' in sig.parameters or any(
-            p.kind == inspect.Parameter.VAR_KEYWORD for p in sig.parameters.values()
-        )
+        param_names = set(sig.parameters.keys())
+        has_kwargs = any(p.kind == inspect.Parameter.VAR_KEYWORD for p in sig.parameters.values())
 
-        if supports_bnb_config:
-            pipe = HeartMuLaGenPipeline.from_pretrained(
-                model_path,
-                version=version,
-                dtype=load_dtype,
-                device=device,
-                bnb_config=bnb_config,
-            )
-        else:
-            if bnb_config is not None:
+        # Build kwargs based on what heartlib supports
+        kwargs = {"version": version}
+
+        # dtype vs torch_dtype (newer versions use torch_dtype)
+        if 'torch_dtype' in param_names or has_kwargs:
+            kwargs['torch_dtype'] = load_dtype
+        elif 'dtype' in param_names:
+            kwargs['dtype'] = load_dtype
+
+        # device parameter
+        if 'device' in param_names or has_kwargs:
+            kwargs['device'] = device
+
+        # quantization_config vs bnb_config (newer versions use quantization_config)
+        if bnb_config is not None:
+            if 'quantization_config' in param_names or has_kwargs:
+                kwargs['quantization_config'] = bnb_config
+            elif 'bnb_config' in param_names:
+                kwargs['bnb_config'] = bnb_config
+            else:
                 print("[HeartMuLa] WARNING: Your heartlib version doesn't support quantization.")
                 print("[HeartMuLa] Please update heartlib to enable int4/int8 quantization, or use quantization='none'.")
                 print("[HeartMuLa] Loading model without quantization (will use more VRAM)...")
-            pipe = HeartMuLaGenPipeline.from_pretrained(
-                model_path,
-                version=version,
-                dtype=load_dtype,
-                device=device,
-            )
+
+        pipe = HeartMuLaGenPipeline.from_pretrained(model_path, **kwargs)
 
         self._model_cache[cache_key] = pipe
         return (pipe,)
