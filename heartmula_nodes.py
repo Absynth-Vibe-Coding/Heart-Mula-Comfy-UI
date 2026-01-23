@@ -160,13 +160,32 @@ class HeartMuLaLoader:
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
 
-        pipe = HeartMuLaGenPipeline.from_pretrained(
-            model_path,
-            version=version,
-            dtype=load_dtype,
-            device=device,
-            bnb_config=bnb_config,
+        # Check if heartlib supports bnb_config parameter
+        import inspect
+        sig = inspect.signature(HeartMuLaGenPipeline.from_pretrained)
+        supports_bnb_config = 'bnb_config' in sig.parameters or any(
+            p.kind == inspect.Parameter.VAR_KEYWORD for p in sig.parameters.values()
         )
+
+        if supports_bnb_config:
+            pipe = HeartMuLaGenPipeline.from_pretrained(
+                model_path,
+                version=version,
+                dtype=load_dtype,
+                device=device,
+                bnb_config=bnb_config,
+            )
+        else:
+            if bnb_config is not None:
+                print("[HeartMuLa] WARNING: Your heartlib version doesn't support quantization.")
+                print("[HeartMuLa] Please update heartlib to enable int4/int8 quantization, or use quantization='none'.")
+                print("[HeartMuLa] Loading model without quantization (will use more VRAM)...")
+            pipe = HeartMuLaGenPipeline.from_pretrained(
+                model_path,
+                version=version,
+                dtype=load_dtype,
+                device=device,
+            )
 
         self._model_cache[cache_key] = pipe
         return (pipe,)
