@@ -11,6 +11,7 @@
 
 Added Flash Attn. Support, on my 5060TI with Flash Attn. 2.7.4 i have a speedboost of about 30 sec. now.<br>
 Huge benefit! now you can switch to int8 quality while still having fast gneration speed using the flash attention even on my 5060ti! <br>
+So means: using flash attn. the INT8 is now as fast as the INT4<br>
 
 It detects if you have flash attn installed, else its using sdpa
 
