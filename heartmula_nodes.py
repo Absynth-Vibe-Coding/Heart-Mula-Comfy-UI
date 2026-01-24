@@ -8,6 +8,75 @@ import folder_paths
 import comfy.model_management
 
 
+def configure_flash_attention_for_gpu():
+    """
+    Configure Flash Attention based on GPU compute capability.
+    Flash Attention / CUTLASS requires SM 7.0+ (Volta and newer).
+    Older GPUs (Pascal, Maxwell, etc.) need the math backend.
+
+    This configures PyTorch's SDPA backend, which heartlib uses internally.
+
+    Returns:
+        tuple: (flash_enabled: bool, gpu_info: str)
+    """
+    if not torch.cuda.is_available():
+        return False, "No CUDA GPU detected"
+
+    try:
+        device_id = torch.cuda.current_device()
+        props = torch.cuda.get_device_properties(device_id)
+        gpu_name = props.name.lower()
+
+        # Check for AMD GPUs (conservatively disable flash attention)
+        amd_indicators = ['gfx', 'amd', 'radeon', 'instinct']
+        is_amd = any(indicator in gpu_name for indicator in amd_indicators)
+
+        # Calculate compute capability (e.g., SM 7.5 = 7.5)
+        compute_cap = props.major + props.minor / 10
+
+        if is_amd:
+            # Disable flash attention for AMD GPUs
+            torch.backends.cuda.enable_flash_sdp(False)
+            torch.backends.cuda.enable_mem_efficient_sdp(False)
+            return False, f"AMD GPU detected ({props.name}) - Flash Attention disabled"
+
+        # Flash Attention requires SM 7.0+ (Volta architecture or newer)
+        # SM 7.0+ = Volta, Turing, Ampere, Ada Lovelace, Hopper, Blackwell
+        # SM 6.x = Pascal (GTX 10xx series)
+        # SM 5.x = Maxwell (GTX 9xx series)
+        if compute_cap >= 7.0:
+            arch_name = {
+                7.0: "Volta",
+                7.5: "Turing",
+                8.0: "Ampere",
+                8.6: "Ampere",
+                8.7: "Ampere",  # Jetson Orin
+                8.9: "Ada Lovelace",
+                9.0: "Hopper",
+                10.0: "Blackwell",
+                12.0: "Blackwell",  # RTX 50xx series
+            }.get(compute_cap, f"SM {compute_cap}")
+
+            # Enable flash attention via PyTorch SDPA backend
+            torch.backends.cuda.enable_flash_sdp(True)
+            torch.backends.cuda.enable_mem_efficient_sdp(True)
+            return True, f"{props.name} (SM {compute_cap}, {arch_name}) - Flash Attention enabled"
+        else:
+            # Disable flash attention for older GPUs
+            torch.backends.cuda.enable_flash_sdp(False)
+            torch.backends.cuda.enable_mem_efficient_sdp(False)
+            return False, f"{props.name} (SM {compute_cap}) - Flash Attention disabled (requires SM 7.0+)"
+
+    except Exception as e:
+        # Disable flash attention for safety on error
+        try:
+            torch.backends.cuda.enable_flash_sdp(False)
+            torch.backends.cuda.enable_mem_efficient_sdp(False)
+        except Exception:
+            pass
+        return False, f"Could not detect GPU capabilities: {e}"
+
+
 def _torchaudio_save_soundfile(filepath, src, sample_rate, **kwargs):
     """Wrapper to force soundfile backend for torchaudio.save (avoids torchcodec dependency)."""
     # Use soundfile directly to save audio
@@ -132,6 +201,10 @@ class HeartMuLaLoader:
 
         device = comfy.model_management.get_torch_device()
 
+        # Configure flash attention via PyTorch SDPA backend (this is how HeartMuLa-Studio does it)
+        flash_enabled, gpu_info = configure_flash_attention_for_gpu()
+        print(f"[HeartMuLa] GPU Detection: {gpu_info}")
+
         # Setup quantization config
         bnb_config = None
         load_dtype = torch.float16
@@ -175,6 +248,16 @@ class HeartMuLaLoader:
         # device parameter
         if 'device' in param_names or has_kwargs:
             kwargs['device'] = device
+
+        # Flash attention is configured via PyTorch SDPA backend (torch.backends.cuda.enable_flash_sdp)
+        # which was already set by configure_flash_attention_for_gpu() above.
+        # Check if flash-attn package is installed for informational purposes
+        if flash_enabled:
+            try:
+                import flash_attn
+                print(f"[HeartMuLa] flash-attn package found (v{getattr(flash_attn, '__version__', 'unknown')})")
+            except ImportError:
+                print("[HeartMuLa] Note: flash-attn package not installed, using PyTorch native flash SDPA")
 
         # quantization_config vs bnb_config (newer versions use quantization_config)
         if bnb_config is not None:
